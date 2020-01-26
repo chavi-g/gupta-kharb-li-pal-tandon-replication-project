@@ -15,7 +15,7 @@ The purpose of this project is to reproduce key claims from a research paper for
 The purpose of this project is to reproduce the cloud detection algorithm proposed by Mohajerani et al’s paper. The paper proposes an end-to-end cloud detection algorithm using Fully Convolutional Networks and claims to outperforms the state-of-the-art method over a benchmark dataset by 8.7% in Jaccard Index. We would like to check the workability and efficiency of this algorithm ideally using R. 
 
 ## Data
-The links to download the dataset have been well documented in the repository provided with the code [here](https://github.com/SorourMo/38-Cloud-A-Cloud-Segmentation-Dataset/blob/master/README.md). The README.md file explains the structure of the training and test datasets. The data has also been hosted in Kaggle and is available [here] (https://www.kaggle.com/sorour/38cloud-cloud-segmentation-in-satellite-images)
+The links to download the dataset have been well documented in the repository provided with the code [here](https://github.com/SorourMo/38-Cloud-A-Cloud-Segmentation-Dataset/blob/master/README.md). The README.md file explains the structure of the training and test datasets. The data has also been hosted in Kaggle and is available [here](https://www.kaggle.com/sorour/38cloud-cloud-segmentation-in-satellite-images).
 
 ## Dependencies
 - Windows 10, CentOS Linux release 7.5.1804
