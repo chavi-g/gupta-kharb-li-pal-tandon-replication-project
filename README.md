@@ -17,3 +17,11 @@ The purpose of this project is to reproduce the cloud detection algorithm propos
 ## Data
 
 ## Dependencies
+- Windows 10, CentOS Linux release 7.5.1804
+- R 3.5.3
+- R Markdown 2.1
+- tensorflow 2.0.0
+- keras 2.2.5.0
+- magick 2.3
+- satellite 1.0.2
+
