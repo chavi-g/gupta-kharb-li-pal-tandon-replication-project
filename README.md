@@ -12,6 +12,8 @@ The purpose of this project is to reproduce key claims from a research paper for
 
 ## Contents
 
+The purpose of this project is to reproduce the cloud detection algorithm proposed by Mohajerani et al’s paper. The paper proposes an end-to-end cloud detection algorithm using Fully Convolutional Networks and claims to outperforms the state-of-the-art method over a benchmark dataset by 8.7% in Jaccard Index. We would like to check the workability and efficiency of this algorithm ideally using R. 
+
 ## Data
 
 ## Dependencies
