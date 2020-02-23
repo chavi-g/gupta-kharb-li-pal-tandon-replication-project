@@ -1,6 +1,7 @@
 ---
 title: "DATA 598: Replication Project"
-output: word_document
+output: bookdown::word_document2
+bibliography: references.bib
 ---
 
 ```{r setup, include=FALSE}
@@ -8,9 +9,15 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 # Introduction
-
+For examing the complexities in replication we chose the paper [@huffer_graham_2017]. This paper is a study the culture of trading human remains on Instagram. It uses several methods to automate data mining techniques to query the "noise" surrounding topics related to trade of human remains. We have chosen to replicate one such method in this project which involves topic modelling.The purpose of this technique is to extract semantic structure from posts. These topics can be used to classify and group different posts relating to trade. This creates a foundation to perform much more deeper research and analysis into understanding the different trends and patterns associated with different aspects of trade such as buying and selling, sales prices, material being traded and other mechanics of trade.   
 
 # Replication Source
+
+From the paper [@huffer_graham_2017], we are replicating Figure \@ref(fig:original-fig) (Figure 5 in the paper). This figure shows different topics modelled from the posts from the account of a single trader/user on Instagram. The key conclusions from this figure are that this particular trader is interested in "real" or authentic human bone artificats.
+
+```{r, original-fig, fig.cap="Original figure from [@huffer_graham_2017]", echo=FALSE}
+knitr::include_graphics("figures/fig5-singletrader.png")
+```
 
 
 # Replication Method
@@ -20,3 +27,5 @@ knitr::opts_chunk$set(echo = TRUE)
 
 
 # Conclusion
+
+# References
