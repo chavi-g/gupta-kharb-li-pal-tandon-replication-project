@@ -1,0 +1,96 @@
+---
+title: "DATA 598: Replication Project"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Introduction
+
+
+# Replication Source
+```{r}
+library(reticulate)
+#use_python('C:\\Users\\ankit\\Anaconda3')
+py_install("pandas")
+py_install("nltk")
+py_install("gensim")
+py_install("numpy")
+```
+
+```{python}
+import nltk
+nltk.download('stopwords')
+import re
+import pandas as pd
+from pprint import pprint
+import gensim
+import gensim.corpora as corpora
+from gensim.utils import simple_preprocess
+from gensim.models import CoherenceModel
+import numpy 
+#import pyLDAvis
+#import pyLDAvis.gensim
+#import matplotlib.pyplot as plt
+#import logging
+#import warnings
+
+```
+
+```{python}
+from nltk.corpus import stopwords
+stop_words = pd.read_csv('C:\\Users\\ankit\\OneDrive\\Desktop\\insta-dead-article-master\\en.txt')
+#can extend stopwords using the below command
+#stop_words.extend(['from','subject','re','edu','use'])
+df = pd.read_csv('C:\\Users\\ankit\\OneDrive\\Desktop\\insta-dead-article-master\\data\\posts-formatted-for-topicmodelling.csv', encoding='latin-1')
+df.head()
+def sent_to_words(sentences):
+    for sentence in sentences:
+        yield(gensim.utils.simple_preprocess(str(sentence),deacc=True)) #deacc = True removes punctuation
+
+data_words = list(sent_to_words(df.text))
+#print(data_words)
+
+def remove_stopwords(texts):
+    return[[word for word in simple_preprocess(str(doc)) if word not in stop_words] for doc in texts]
+data_words_nostops = remove_stopwords(data_words)
+print(data_words_nostops)
+
+```
+
+```{python}
+id2word = corpora.Dictionary(data_words_nostops)
+
+#create Corpus
+texts = data_words_nostops
+
+#term document frequency
+corpus = [id2word.doc2bow(text) for text in texts]
+mallet_path='C:\\Users\\ankit\\Downloads\\mallet-2.0.8 (1)\\mallet-2.0.8'
+lda=gensim.models.wrappers.LdaMallet(mallet_path,corpus=corpus,num_topics=25,id2word=id2word)
+#lda = gensim.models.ldamodel.LdaModel(corpus, num_topics=25)
+print (lda)
+
+```
+```{python}
+topics_terms=lda.state.get_lambda()
+numpy.savetxt('C:\\Users\\ankit\\OneDrive\\Desktop\\insta-dead-article-master\\prob_matrix.csv',topics_terms,delimiter=',')
+
+```
+
+```{r}
+prob_matrix <- read.csv("C:/Users/ankit/OneDrive/Desktop/insta-dead-article-master/prob_matrix.csv", header=FALSE)
+topic.docs <- topic.docs / rowSums(prob_matrix)
+prob_matrix$ID <- seq.int(nrow(prob_matrix))
+
+```
+
+# Replication Method
+
+
+# Figures
+
+
+# Conclusion
