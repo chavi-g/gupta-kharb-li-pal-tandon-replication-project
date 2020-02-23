@@ -1,0 +1,22 @@
+---
+title: "DATA 598: Replication Project"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Introduction
+
+
+# Replication Source
+
+
+# Replication Method
+
+
+# Figures
+
+
+# Conclusion
