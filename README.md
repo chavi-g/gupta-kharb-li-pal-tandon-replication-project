@@ -28,5 +28,5 @@ The links to download the dataset have been well documented in the repository pr
 - Gensim 3.8.0
 - pyLDAvis 2.1.2
 
-# Contributing
+## Contributing
 We welcome contributions from everyone. Before you get started, please see our [contributor guidelines](CONTRIBUTING.md). Please note that this project is released with a [Contributor Code of Conduct](CODE_OF_CONDUCT.md). By participating in this project you agree to abide by its terms.
