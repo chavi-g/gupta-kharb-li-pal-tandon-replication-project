@@ -9,7 +9,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 # Introduction
-For examing the complexities in replication we chose the paper [@huffer_graham_2017]. This paper is a study the culture of trading human remains on Instagram. It uses several methods to automate data mining techniques to query the "noise" surrounding topics related to trade of human remains. We have chosen to replicate one such method in this project which involves topic modelling.The purpose of this technique is to extract semantic structure from posts. These topics can be used to classify and group different posts relating to trade. This creates a foundation to perform much more deeper research and analysis into understanding the different trends and patterns associated with different aspects of trade such as buying and selling, sales prices, material being traded and other mechanics of trade.   
+For examing the complexities in replication we chose the paper [@huffer_graham_2017]. This paper is a study the culture of trading human remains on Instagram. It uses several methods to automate data mining techniques to query the "noise" surrounding topics related to trade of human remains. We have chosen to replicate one such method in this project which involves topic modelling. The purpose of this technique is to extract semantic structure from posts. These topics can be used to classify and group different posts relating to trade. This creates a foundation to perform much more deeper research and analysis into understanding the different trends and patterns associated with different aspects of trade such as buying and selling, sales prices, material being traded and other mechanics of trade.   
 
 # Replication Source
 
@@ -21,6 +21,9 @@ knitr::include_graphics("figures/fig5-singletrader.png")
 
 
 # Replication Method
+Figure 5: Topics within the posts of a single Instagram account, is related to topic modeling and was originally carried out using the ‘mallet’ package in R. We decided to use the ‘gensim’ package in Python to perform topic modeling and replicate the figure. 
+Firstly, we read in the csv file and removed stopwords as specified in the paper. Secondly, we converted texts from each of the instagram posts into a vector of words and stored it in a variable called ‘data_words’. Thirdly, we created a variable called ‘corpus’ that maps every word to an id and calculates the term document frequency. Then we built an LDA model using the ‘gensim’ package and specified the parameter for the number of topics as 25. This model is named ‘lda’. Finally, we visualized the LDA model using pyLDAvis. 
+Our replication uses different software and package, but it should not affect the overall result. We kept the same criteria for stopwords and the number of topics as the original study. We followed the same analytical procedure. The ‘gensim’ package in Python is for topic modeling and has similar functions to the ‘mallet’ package used by the original study. Since we use the same dataset and methods and only change the operating system, the result should be the same. 
 
 
 # Figures
