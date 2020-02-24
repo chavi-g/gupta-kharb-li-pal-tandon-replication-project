@@ -12,15 +12,16 @@ knitr::knit_engines$set(python = reticulate::eng_python)
 
 
 # Replication Source
-```{r}
-install.packages("reticulate",repos = "http://cran.us.r-project.org")
+```{r cache=TRUE, echo=FALSE}
+#install.packages("reticulate",repos = "http://cran.us.r-project.org")
 library(reticulate)
 use_virtualenv("r-reticulate")
+#virtualenv_install("r-reticulate", ignore_installed = FALSE)
 py_available(TRUE)
-py_install("pandas")
-#py_install("nltk")
-py_install("gensim")
-#py_install("numpy")
+py_install("pandas", pip = TRUE)
+py_install("nltk", pip = TRUE)
+py_install("gensim", pip = TRUE)
+py_install("numpy", pip = TRUE)
 ```
 
 ```{python}
@@ -43,14 +44,13 @@ import numpy
 ```
 
 ```{python}
-stop_words = pd.read_csv('C:\\Users\\ankit\\OneDrive\\Desktop\\insta-dead-article-master\\en.txt',header=None)
-for col in stop_words:
-  print(col)
+print("hello")
+stop_words = pd.read_csv('D:\MSDS\Winter 2020\Reproducibility for DS\Replication-Project-DATA598\data\en.txt',header=None)
 stop_words=stop_words[0].to_list()
 #print(stop_words)
 #can extend stopwords using the below command
 #stop_words.extend(['from','subject','re','edu','use'])
-df = pd.read_csv('C:\\Users\\ankit\\OneDrive\\Desktop\\insta-dead-article-master\\data\\posts-formatted-for-topicmodelling.csv', encoding='latin-1')
+df = pd.read_csv('D:\MSDS\Winter 2020\Reproducibility for DS\Replication-Project-DATA598\data\posts-formatted-for-topicmodelling.csv', encoding='latin-1')
 df.head()
 def sent_to_words(sentences):
     for sentence in sentences:
@@ -81,8 +81,6 @@ texts = data_words_nostops
 corpus = [id2word.doc2bow(text) for text in texts]
 #print(corpus)
 
-#mallet_path='C:\\Users\\ankit\\Downloads\\mallet-2.0.8 (1)\\mallet-2.0.8'
-#lda=gensim.models.wrappers.LdaMallet(mallet_path,corpus=corpus,num_topics=25,id2word=id2word)
 lda = gensim.models.ldamodel.LdaModel(corpus, num_topics=25,id2word=id2word,minimum_probability =0)
 x=lda.show_topics(num_topics=25,num_words=3,formatted=False)
 topics_words = [(tp[0], [wd[0] for wd in tp[1]]) for tp in x]
@@ -106,17 +104,17 @@ print(l2)
 doct=lda.get_document_topics(corpus,minimum_probability =0.0)
 df=pd.DataFrame([[x[1] for x in y] for y in doct], index = [x for x in range(len(doct))])
 df.columns = l
-df.to_csv("C:\\Users\\ankit\\OneDrive\\Desktop\\insta-dead-article-master\\prob.csv")
+df.to_csv("D:\MSDS\Winter 2020\Reproducibility for DS\Replication-Project-DATA598\data\prob.csv")
 ```
 
 
 ```{r}
-prob_matrix <- read.csv("C:\\Users\\ankit\\OneDrive\\Desktop\\insta-dead-article-master\\prob.csv", header=TRUE)
+prob_matrix <- read.csv("../data/prob.csv", header=TRUE)
 ```
 
 ```{r}
 topic_docs <- prob_matrix
-captionstext <- read.csv('C:\\Users\\ankit\\OneDrive\\Desktop\\insta-dead-article-master\\data\\posts-formatted-for-topicmodelling.csv', stringsAsFactors = FALSE)
+captionstext <- read.csv('../data/posts-formatted-for-topicmodelling.csv', stringsAsFactors = FALSE)
 ## kludge for when username comesthrough as numeric rather than character
 captionstext$username <-as.character(captionstext$username)
 
@@ -141,7 +139,7 @@ topic.proportions.df <- melt(cbind(data.frame(df1),
 # plot for each doc by that author
 require(ggplot2)
 dpi=600    #pixels per square inch
-png("C:\\Users\\ankit\\OneDrive\\Desktop\\insta-dead-article-master\\a-figure.png", width=14*dpi, height=14*dpi, res=dpi)
+png("../analysis/figures/figure.png", width=14*dpi, height=14*dpi, res=dpi)
 
 ggplot(topic.proportions.df, aes(topic, value, fill=document)) +
   geom_bar(stat="identity") +
@@ -151,7 +149,11 @@ ggplot(topic.proportions.df, aes(topic, value, fill=document)) +
   facet_wrap(~ document, ncol=5)
 dev.off()
 
+```
 
+
+```{r}
+knitr::include_graphics("../analysis/figures/figure.png")
 ```
 
 # Replication Method
