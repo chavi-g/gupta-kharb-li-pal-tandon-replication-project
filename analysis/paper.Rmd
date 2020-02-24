@@ -57,10 +57,10 @@ import numpy
 
 ```
 
-```{python include=FALSE}
-stop_words = pd.read_csv('D:\MSDS\Winter 2020\Reproducibility for DS\Replication-Project-DATA598\data\en.txt',header=None)
+```{python}
+stop_words = pd.read_csv('..\data\en.txt',header=None)
 stop_words=stop_words[0].to_list()
-df = pd.read_csv('D:\MSDS\Winter 2020\Reproducibility for DS\Replication-Project-DATA598\data\posts-formatted-for-topicmodelling.csv', encoding='latin-1')
+df = pd.read_csv('..\data\posts-formatted-for-topicmodelling.csv', encoding='latin-1')
 df.head()
 def sent_to_words(sentences):
     for sentence in sentences:
@@ -89,7 +89,7 @@ texts = data_words_nostops
 corpus = [id2word.doc2bow(text) for text in texts]
 #print(corpus)
 
-lda = gensim.models.ldamodel.LdaModel(corpus, num_topics=25,id2word=id2word,minimum_probability =0)
+lda = gensim.models.ldamodel.LdaModel(corpus, num_topics=25,id2word=id2word,minimum_probability =0, random_state=100)
 x=lda.show_topics(num_topics=25,num_words=3,formatted=False)
 topics_words = [(tp[0], [wd[0] for wd in tp[1]]) for tp in x]
 l=[]
