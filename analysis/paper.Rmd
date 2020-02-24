@@ -177,12 +177,14 @@ plot_figure <- function() {
 plot_figure()
 ```
 
-```{r echo=FALSE}
+```{r ,final-plot, echo=FALSE}
 knitr::include_graphics("../analysis/figures/output_figure.png")
 ```
+ \@ref(fig:final-plot) Final results of the top 3 words of the 25 most popular topics.
 
 # Conclusion
 
 Our reimplementation of Figure \@ref(fig:original-fig) (Figure 5 in the paper) is able to reproduce the experimental data and figures to a large extent using a mix of python and R. In comparison to the figures in the original publication, our reimplementation shows little differences in the results. The top 3 words in the 25 topics that are selected as being the most popular are slightly different than the ones we get from the R code of the original authors. This can be attributed to the differences in the internal workings of the packages in R and python. We have displayed all the words related to the 25 topics to aid the comparison of our results from the original results. Though we used the same analysis procedure, a different library and a different running environment we do not get the exact same figure but one which is in close resemblance to the figure in the original publication.
 
 # References
+1. [@huffer_graham_2017]
