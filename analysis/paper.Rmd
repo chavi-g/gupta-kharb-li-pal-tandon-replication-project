@@ -34,8 +34,9 @@ Steps:
  6. We used qqplot to approximate the visualization in R. 
  7. We also displayed all the words relating to a particular topic in R. 
  
- We kept the same criteria for stopwords and the number of topics as the original study. We followed the same analytical procedure. The ‘gensim’ package in Python is for topic modeling and has similar functions to the ‘mallet’ package used by the original study. Since we use the same dataset and methods and only change the operating system, the result should be the same. 
+ We kept the same criteria for stopwords and the number of topics as the original study. We followed the same analytical procedure. The ‘gensim’ package in Python is for topic modeling and has similar functions to the ‘mallet’ package used by the original study. Since we use the same dataset and methods and only change the topic modeling library i.e. the tools and the environment of the experiment, the result should be the same. 
 
+Below is the code we have used for our replication.
 
 ```{r cache=TRUE, include=FALSE}
 #install.packages("reticulate",repos = "http://cran.us.r-project.org")
