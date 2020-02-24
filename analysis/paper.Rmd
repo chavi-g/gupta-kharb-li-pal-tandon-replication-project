@@ -30,8 +30,9 @@ Steps:
  2. We converted texts from each of the instagram posts into a vector of words and stored it in a variable called ‘data_words’. 
  3. We created a variable called ‘corpus’ that maps every word to an id and calculates the term document frequency.
  4. We built an LDA model using the ‘gensim’ package and specified the parameter for the number of topics as 25. This model is named ‘lda’. 
- 5. Wrote down our results in preliminary CSV. Then further we read the CSV with our R chunk and we were able to approximate the visualisation in R. 
- 6. We also displayed all the words relating to a particular topic in R. 
+ 5. We wrote down our results in a preliminary CSV called 'prob.csv'. Then we read the CSV with our R chunk, performing data type conversion and manipulation same as the original paper. 
+ 6. We used qqplot to approximate the visualization in R. 
+ 7. We also displayed all the words relating to a particular topic in R. 
  
  We kept the same criteria for stopwords and the number of topics as the original study. We followed the same analytical procedure. The ‘gensim’ package in Python is for topic modeling and has similar functions to the ‘mallet’ package used by the original study. Since we use the same dataset and methods and only change the operating system, the result should be the same. 
 
