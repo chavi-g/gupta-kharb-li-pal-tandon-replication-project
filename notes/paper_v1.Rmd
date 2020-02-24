@@ -4,10 +4,8 @@ output:
   html_document:
     df_print: paged
 ---
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-
+```{r setup, include = FALSE}
+knitr::knit_engines$set(python = reticulate::eng_python)
 ```
 
 # Introduction
@@ -17,11 +15,12 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r}
 install.packages("reticulate",repos = "http://cran.us.r-project.org")
 library(reticulate)
-#use_python('C:\\Users\\ankit\\Anaconda3')
+use_virtualenv("r-reticulate")
+py_available(TRUE)
 py_install("pandas")
-py_install("nltk")
+#py_install("nltk")
 py_install("gensim")
-py_install("numpy")
+#py_install("numpy")
 ```
 
 ```{python}
