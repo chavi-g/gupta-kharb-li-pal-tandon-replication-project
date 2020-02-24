@@ -183,5 +183,6 @@ knitr::include_graphics("../analysis/figures/output_figure.png")
 
 # Conclusion
 
+We were able to replicate the figures to a large extent using a mix of python and R, but we were not able to get the exact same results. The top 3 words in the 25 topics that are selected as being the most popular are slightly different than the ones we get from the R code. This may be due to differences in the internal workings of the packages in R and python. We have also displayed all the words related to the 25 topics for better comparison. Thought we used the same procedures, but we were not able to replicate the figures exactly, we were able to to get results that had close resemblence with the existing R paper.
 
 # References
