@@ -26,8 +26,150 @@ Firstly, we read in the csv file and removed stopwords as specified in the paper
 Our replication uses different software and package, but it should not affect the overall result. We kept the same criteria for stopwords and the number of topics as the original study. We followed the same analytical procedure. The ‘gensim’ package in Python is for topic modeling and has similar functions to the ‘mallet’ package used by the original study. Since we use the same dataset and methods and only change the operating system, the result should be the same. 
 
 
-# Figures
+```{r cache=TRUE, include=FALSE}
+#install.packages("reticulate",repos = "http://cran.us.r-project.org")
+library(reticulate)
+use_virtualenv("r-reticulate")
+#virtualenv_install("r-reticulate", ignore_installed = FALSE)
+py_available(TRUE)
+py_install("pandas", pip = TRUE)
+py_install("nltk", pip = TRUE)
+py_install("gensim", pip = TRUE)
+py_install("numpy", pip = TRUE)
+```
 
+```{python include=FALSE}
+import nltk
+nltk.download('stopwords')
+import re
+import pandas as pd
+from pprint import pprint
+import gensim
+import gensim.corpora as corpora
+from gensim.utils import simple_preprocess
+from gensim.models import CoherenceModel
+import numpy 
+#import pyLDAvis
+#import pyLDAvis.gensim
+#import matplotlib.pyplot as plt
+#import logging
+#import warnings
+
+```
+
+```{python include=FALSE}
+stop_words = pd.read_csv('D:\MSDS\Winter 2020\Reproducibility for DS\Replication-Project-DATA598\data\en.txt',header=None)
+stop_words=stop_words[0].to_list()
+df = pd.read_csv('D:\MSDS\Winter 2020\Reproducibility for DS\Replication-Project-DATA598\data\posts-formatted-for-topicmodelling.csv', encoding='latin-1')
+df.head()
+def sent_to_words(sentences):
+    for sentence in sentences:
+        yield(gensim.utils.simple_preprocess(str(sentence),deacc=True)) #deacc = True removes punctuation
+
+data_words = list(sent_to_words(df.text))
+#print(data_words)
+#print([word  for word in simple_preprocess(str(data_words[0])) if word not in stop_words])
+#print( type(simple_preprocess(str(data_words[0]))))
+def remove_stopwords(texts):
+    return[[word for word in simple_preprocess(str(doc)) if word not in stop_words] for doc in texts]
+data_words_nostops = remove_stopwords(data_words)
+#print(data_words_nostops)
+
+```
+
+```{python include=FALSE}
+id2word = corpora.Dictionary(data_words_nostops)
+#create Corpus
+texts = data_words_nostops
+```
+
+
+```{python include=FALSE}
+#term document frequency
+corpus = [id2word.doc2bow(text) for text in texts]
+#print(corpus)
+
+lda = gensim.models.ldamodel.LdaModel(corpus, num_topics=25,id2word=id2word,minimum_probability =0)
+x=lda.show_topics(num_topics=25,num_words=3,formatted=False)
+topics_words = [(tp[0], [wd[0] for wd in tp[1]]) for tp in x]
+l=[]
+for topic,words in topics_words:
+    l.append(".".join(words))
+
+```
+
+```{python include=FALSE}
+y=lda.show_topics(num_topics=25,formatted=False)
+topics_words2 = [(tp[0], [wd[0] for wd in tp[1]]) for tp in y]
+l2=[]
+for topic,words in topics_words2:
+    l2.append(".".join(words))
+```
+
+
+```{python include=FALSE}
+doct=lda.get_document_topics(corpus,minimum_probability =0.0)
+df=pd.DataFrame([[x[1] for x in y] for y in doct], index = [x for x in range(len(doct))])
+df.columns = l
+df.to_csv("D:\MSDS\Winter 2020\Reproducibility for DS\Replication-Project-DATA598\data\prob.csv")
+```
+
+
+```{r echo=FALSE}
+prob_matrix <- read.csv("../data/prob.csv", header=TRUE)
+```
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+require(reshape2)
+plot_figure <- function() {
+ topic_docs <- prob_matrix
+  captionstext <- read.csv('../data/posts-formatted-for-topicmodelling.csv', stringsAsFactors = FALSE)
+## kludge for when username comesthrough as numeric rather than character
+  captionstext$username <-as.character(captionstext$username)
+
+  documents <- data.frame(text = captionstext$text,
+                        id = make.unique(captionstext$username),
+                        class = captionstext$year, 
+                        stringsAsFactors=FALSE)
+  topic_docs<- t(topic_docs[,-1])
+  names(topic_docs) <- documents$id
+# find top n topics for a certain author
+  df1 <- t(topic_docs[,grep("234396855", names(topic_docs))])
+  #8963295 is a person who has 'for sale' in her post
+  #255766488 natural_selections - skullshop.ca
+  #361451583 ryan matthew cohn
+  #234396855 pandora's box, York
+  topic.proportions.df <- melt(cbind(data.frame(df1),
+                                   document=factor(1:nrow(df1))),
+                             variable.name="topic",
+                             id.vars = "document") 
+  
+  # plot for each doc by that author
+  require(ggplot2)
+  dpi=600    #pixels per square inch
+  png("../analysis/figures/output_figure.png", width=14*dpi, height=14*dpi, res=dpi)
+
+  print({
+    p <- ggplot(topic.proportions.df, aes(topic, value, fill=document)) +
+      geom_bar(stat="identity") +
+      ylab("proportion") +
+      theme(axis.text.x = element_text(angle=90, hjust=1)) +  
+      coord_flip() +
+      facet_wrap(~ document, ncol=5)
+  })
+  dev.off()
+}
+```
+
+# Replicated Figures
+
+```{r warning=FALSE, message=FALSE, include=FALSE, echo=TRUE}
+plot_figure()
+```
+
+```{r echo=FALSE}
+knitr::include_graphics("../analysis/figures/output_figure.png")
+```
 
 # Conclusion
 
