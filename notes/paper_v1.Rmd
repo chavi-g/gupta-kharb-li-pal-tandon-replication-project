@@ -1,10 +1,13 @@
 ---
-title: "DATA 598: Replication Project"
-output: word_document
+title: 'DATA 598: Replication Project'
+output:
+  html_document:
+    df_print: paged
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+
 ```
 
 # Introduction
@@ -12,6 +15,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Replication Source
 ```{r}
+install.packages("reticulate",repos = "http://cran.us.r-project.org")
 library(reticulate)
 #use_python('C:\\Users\\ankit\\Anaconda3')
 py_install("pandas")
@@ -40,8 +44,11 @@ import numpy
 ```
 
 ```{python}
-from nltk.corpus import stopwords
-stop_words = pd.read_csv('C:\\Users\\ankit\\OneDrive\\Desktop\\insta-dead-article-master\\en.txt')
+stop_words = pd.read_csv('C:\\Users\\ankit\\OneDrive\\Desktop\\insta-dead-article-master\\en.txt',header=None)
+for col in stop_words:
+  print(col)
+stop_words=stop_words[0].to_list()
+#print(stop_words)
 #can extend stopwords using the below command
 #stop_words.extend(['from','subject','re','edu','use'])
 df = pd.read_csv('C:\\Users\\ankit\\OneDrive\\Desktop\\insta-dead-article-master\\data\\posts-formatted-for-topicmodelling.csv', encoding='latin-1')
@@ -52,38 +59,99 @@ def sent_to_words(sentences):
 
 data_words = list(sent_to_words(df.text))
 #print(data_words)
-
+#print([word  for word in simple_preprocess(str(data_words[0])) if word not in stop_words])
+#print( type(simple_preprocess(str(data_words[0]))))
 def remove_stopwords(texts):
     return[[word for word in simple_preprocess(str(doc)) if word not in stop_words] for doc in texts]
 data_words_nostops = remove_stopwords(data_words)
-print(data_words_nostops)
+#print(data_words_nostops)
 
 ```
 
 ```{python}
 id2word = corpora.Dictionary(data_words_nostops)
-
+print(len(id2word))
 #create Corpus
 texts = data_words_nostops
+#print(texts)
+```
 
+
+```{python}
 #term document frequency
 corpus = [id2word.doc2bow(text) for text in texts]
-mallet_path='C:\\Users\\ankit\\Downloads\\mallet-2.0.8 (1)\\mallet-2.0.8'
-lda=gensim.models.wrappers.LdaMallet(mallet_path,corpus=corpus,num_topics=25,id2word=id2word)
-#lda = gensim.models.ldamodel.LdaModel(corpus, num_topics=25)
-print (lda)
+#print(corpus)
+
+#mallet_path='C:\\Users\\ankit\\Downloads\\mallet-2.0.8 (1)\\mallet-2.0.8'
+#lda=gensim.models.wrappers.LdaMallet(mallet_path,corpus=corpus,num_topics=25,id2word=id2word)
+lda = gensim.models.ldamodel.LdaModel(corpus, num_topics=25,id2word=id2word,minimum_probability =0)
+x=lda.show_topics(num_topics=25,num_words=3,formatted=False)
+topics_words = [(tp[0], [wd[0] for wd in tp[1]]) for tp in x]
+l=[]
+for topic,words in topics_words:
+    l.append(".".join(words))
+#print(l)
 
 ```
 ```{python}
-topics_terms=lda.state.get_lambda()
-numpy.savetxt('C:\\Users\\ankit\\OneDrive\\Desktop\\insta-dead-article-master\\prob_matrix.csv',topics_terms,delimiter=',')
+y=lda.show_topics(num_topics=25,formatted=False)
+topics_words2 = [(tp[0], [wd[0] for wd in tp[1]]) for tp in y]
+l2=[]
+for topic,words in topics_words2:
+    l2.append(".".join(words))
+print(l2)
+```
 
+
+```{python}
+doct=lda.get_document_topics(corpus,minimum_probability =0.0)
+df=pd.DataFrame([[x[1] for x in y] for y in doct], index = [x for x in range(len(doct))])
+df.columns = l
+df.to_csv("C:\\Users\\ankit\\OneDrive\\Desktop\\insta-dead-article-master\\prob.csv")
+```
+
+
+```{r}
+prob_matrix <- read.csv("C:\\Users\\ankit\\OneDrive\\Desktop\\insta-dead-article-master\\prob.csv", header=TRUE)
 ```
 
 ```{r}
-prob_matrix <- read.csv("C:/Users/ankit/OneDrive/Desktop/insta-dead-article-master/prob_matrix.csv", header=FALSE)
-topic.docs <- topic.docs / rowSums(prob_matrix)
-prob_matrix$ID <- seq.int(nrow(prob_matrix))
+topic_docs <- prob_matrix
+captionstext <- read.csv('C:\\Users\\ankit\\OneDrive\\Desktop\\insta-dead-article-master\\data\\posts-formatted-for-topicmodelling.csv', stringsAsFactors = FALSE)
+## kludge for when username comesthrough as numeric rather than character
+captionstext$username <-as.character(captionstext$username)
+
+documents <- data.frame(text = captionstext$text,
+                        id = make.unique(captionstext$username),
+                        class = captionstext$year, 
+                        stringsAsFactors=FALSE)
+topic_docs<- t(topic_docs[,-1])
+names(topic_docs) <- documents$id
+# find top n topics for a certain author
+df1 <- t(topic_docs[,grep("234396855", names(topic_docs))])
+#8963295 is a person who has 'for sale' in her post
+#255766488 natural_selections - skullshop.ca
+#361451583 ryan matthew cohn
+#234396855 pandora's box, York
+#colnames(df1) <- topics.labels
+require(reshape2)
+topic.proportions.df <- melt(cbind(data.frame(df1),
+                                   document=factor(1:nrow(df1))),
+                             variable.name="topic",
+                             id.vars = "document") 
+# plot for each doc by that author
+require(ggplot2)
+dpi=600    #pixels per square inch
+png("C:\\Users\\ankit\\OneDrive\\Desktop\\insta-dead-article-master\\a-figure.png", width=14*dpi, height=14*dpi, res=dpi)
+
+ggplot(topic.proportions.df, aes(topic, value, fill=document)) +
+  geom_bar(stat="identity") +
+  ylab("proportion") +
+  theme(axis.text.x = element_text(angle=90, hjust=1)) +  
+  coord_flip() +
+  facet_wrap(~ document, ncol=5)
+dev.off()
+
 
 ```
 
