@@ -17,12 +17,11 @@ We have chosen to replicate one such method in this project which involves topic
 
 # Replication Source
 
-From the paper [@huffer_graham_2017], we are replicating Figure \@ref(fig:original-fig) (Figure 5 in the paper). This figure shows different topics modelled from the posts from the account of a single trader/user on Instagram. The key conclusions from this figure are that this particular trader is interested in "real" or authentic human bone artificats.
+From the paper [@huffer_graham_2017], we are replicating Figure \@ref(fig:original-fig) (Figure 5 in the paper). This figure shows different topics modeled from the posts from the account of a single trader/user on Instagram. The key conclusions from this figure are that this particular trader is interested in "real" or authentic human bone artifacts. The original method used by the authors of the paper for the topic modeling is through the use of the ‘mallet’ package in R. We have used ‘gensim’ package in python for the same. We make this change of library so as to replicate the study, as this is like changing the tools/environment in which analysis is done but it should not change the results.
 
 ```{r, original-fig, fig.cap="Original figure from [@huffer_graham_2017]", echo=FALSE}
 knitr::include_graphics("figures/fig5-singletrader.png")
 ```
-
 
 # Replication Method
 Figure 5: Topics within the posts of a single Instagram account, is related to topic modeling and was originally carried out using the ‘mallet’ package in R. We decided to use the ‘gensim’ package in Python to perform topic modeling and replicate the figure. 
