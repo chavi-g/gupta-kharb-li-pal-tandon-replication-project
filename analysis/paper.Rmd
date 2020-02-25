@@ -42,7 +42,7 @@ Steps:
 
 We kept the same criteria for stopwords and the number of topics as the original study. We followed the same analytical procedure. The ‘gensim’ package in Python is for topic modeling and has similar functions to the ‘mallet’ package used by the original study. Since we use the same dataset and methods and only change the topic modeling library i.e. the tools and the environment of the experiment, the result should be the same. 
 
-Below is the code we have used for our replication.
+The python code used for replication can be found [here](https://github.com/chavi-g/Replication-Project-DATA598/blob/master/notes/LDA_model.py).
 
 ```{r cache=TRUE, include=FALSE}
 #install.packages("reticulate",repos = "http://cran.us.r-project.org")
@@ -73,7 +73,7 @@ import numpy
 #import warnings
 ```
 
-```{python}
+```{python include=FALSE}
 ### Load stop words from en.text to process and clean the data
 
 stop_words = pd.read_csv('..\data\en.txt',header=None)
@@ -92,7 +92,7 @@ data_words_nostops = remove_stopwords(data_words)
 #print(data_words_nostops)
 ```
 
-```{python}
+```{python include=FALSE}
 ## Create Corpus
 id2word = corpora.Dictionary(data_words_nostops)
 texts = data_words_nostops
@@ -100,7 +100,7 @@ corpus = [id2word.doc2bow(text) for text in texts]
 ```
 
 
-```{python}
+```{python include=FALSE}
 ## Build model with 25 topics
 lda = gensim.models.ldamodel.LdaModel(corpus, num_topics=25,id2word=id2word,minimum_probability =0, random_state=100)
 ```
@@ -117,14 +117,13 @@ print(l2)
 ```
 
 
-```{python}
+```{python include=FALSE}
 ## Generate topic labels from top 3 words of the topic
 x=lda.show_topics(num_topics=25,num_words=3,formatted=False)
 topics_words = [(tp[0], [wd[0] for wd in tp[1]]) for tp in x]
 l=[]
 for topic,words in topics_words:
     l.append(".".join(words))
-
 ```
 
 ```{python include=FALSE}
@@ -132,12 +131,11 @@ for topic,words in topics_words:
 doct=lda.get_document_topics(corpus,minimum_probability =0.0)
 df=pd.DataFrame([[x[1] for x in y] for y in doct], index = [x for x in range(len(doct))])
 df.columns = l
-df.to_csv("D:\MSDS\Winter 2020\Reproducibility for DS\Replication-Project-DATA598\data\prob.csv")
+df.to_csv("..\data\prob.csv")
 ```
 
 
-**R function to generate the replication image:**
-```{r echo=TRUE, warning=FALSE, message=FALSE}
+```{r echo=FALSE, warning=FALSE, message=FALSE}
 prob_matrix <- read.csv("../data/prob.csv", header=TRUE)
 require(reshape2)
 
