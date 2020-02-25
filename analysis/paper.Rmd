@@ -48,7 +48,6 @@ Below is the code we have used for our replication.
 #install.packages("reticulate",repos = "http://cran.us.r-project.org")
 library(reticulate)
 use_virtualenv("r-reticulate")
-#virtualenv_install("r-reticulate", ignore_installed = FALSE)
 py_available(TRUE)
 py_install("pandas", pip = TRUE)
 py_install("nltk", pip = TRUE)
@@ -72,10 +71,11 @@ import numpy
 #import matplotlib.pyplot as plt
 #import logging
 #import warnings
-
 ```
 
 ```{python}
+### Load stop words from en.text to process and clean the data
+
 stop_words = pd.read_csv('..\data\en.txt',header=None)
 stop_words=stop_words[0].to_list()
 df = pd.read_csv('..\data\posts-formatted-for-topicmodelling.csv', encoding='latin-1')
@@ -85,29 +85,40 @@ def sent_to_words(sentences):
         yield(gensim.utils.simple_preprocess(str(sentence),deacc=True)) #deacc = True removes punctuation
 
 data_words = list(sent_to_words(df.text))
-#print(data_words)
-#print([word  for word in simple_preprocess(str(data_words[0])) if word not in stop_words])
-#print( type(simple_preprocess(str(data_words[0]))))
+
 def remove_stopwords(texts):
     return[[word for word in simple_preprocess(str(doc)) if word not in stop_words] for doc in texts]
 data_words_nostops = remove_stopwords(data_words)
 #print(data_words_nostops)
-
 ```
 
-```{python include=FALSE}
+```{python}
+## Create Corpus
 id2word = corpora.Dictionary(data_words_nostops)
-#create Corpus
 texts = data_words_nostops
+corpus = [id2word.doc2bow(text) for text in texts]
 ```
 
 
-```{python include=FALSE}
-#term document frequency
-corpus = [id2word.doc2bow(text) for text in texts]
-#print(corpus)
-
+```{python}
+## Build model with 25 topics
 lda = gensim.models.ldamodel.LdaModel(corpus, num_topics=25,id2word=id2word,minimum_probability =0, random_state=100)
+```
+
+
+The following are the topics that were generated from the model:
+```{python echo=FALSE}
+y=lda.show_topics(num_topics=25,formatted=False)
+topics_words2 = [(tp[0], [wd[0] for wd in tp[1]]) for tp in y]
+l2=[]
+for topic,words in topics_words2:
+    l2.append(".".join(words))
+print(l2)
+```
+
+
+```{python}
+## Generate topic labels from top 3 words of the topic
 x=lda.show_topics(num_topics=25,num_words=3,formatted=False)
 topics_words = [(tp[0], [wd[0] for wd in tp[1]]) for tp in x]
 l=[]
@@ -117,15 +128,7 @@ for topic,words in topics_words:
 ```
 
 ```{python include=FALSE}
-y=lda.show_topics(num_topics=25,formatted=False)
-topics_words2 = [(tp[0], [wd[0] for wd in tp[1]]) for tp in y]
-l2=[]
-for topic,words in topics_words2:
-    l2.append(".".join(words))
-```
-
-
-```{python include=FALSE}
+## Save Document-Topic Probability matrix to csv
 doct=lda.get_document_topics(corpus,minimum_probability =0.0)
 df=pd.DataFrame([[x[1] for x in y] for y in doct], index = [x for x in range(len(doct))])
 df.columns = l
@@ -133,12 +136,11 @@ df.to_csv("D:\MSDS\Winter 2020\Reproducibility for DS\Replication-Project-DATA59
 ```
 
 
-```{r echo=FALSE}
+**R function to generate the replication image:**
+```{r echo=TRUE, warning=FALSE, message=FALSE}
 prob_matrix <- read.csv("../data/prob.csv", header=TRUE)
-```
-
-```{r echo=FALSE, warning=FALSE, message=FALSE}
 require(reshape2)
+
 plot_figure <- function() {
  topic_docs <- prob_matrix
   captionstext <- read.csv('../data/posts-formatted-for-topicmodelling.csv', stringsAsFactors = FALSE)
@@ -185,10 +187,9 @@ plot_figure <- function() {
 plot_figure()
 ```
 
-```{r ,final-plot, echo=FALSE}
+```{r ,final-plot, fig.cap="Final results of the top 3 words of the 25 most popular topics", echo=FALSE}
 knitr::include_graphics("../analysis/figures/output_figure.png")
 ```
- \@ref(fig:final-plot) Final results of the top 3 words of the 25 most popular topics.
 
 # Conclusion
 
@@ -196,4 +197,3 @@ Using the python package 'gensim' for performing the topic modeling and R for co
 This can be attributed to the differences in the internal workings of the packages in R and python. In the original publication, the authors created a topic trainer object, loaded the documents into the object, trained the model, and normalized the results. In our replication project, we broke the texts in each document into words, mapped these words to Ids, and trained the LDA model. The differences probably lay in how the LDA model in Python and MalletLDA model in R were run, since the body of the texts is the same. We have displayed all the words related to the 25 topics to aid the comparison of our results to the original results. Although we used the same analysis procedure, a different library, and a different running environment, we do not get the exact same figure, but one which is in close resemblance to the figure in the original publication. The diversions are likely due to detailed executions of the models rather than differences in principles.
 
 # References
-1. [@huffer_graham_2017]
