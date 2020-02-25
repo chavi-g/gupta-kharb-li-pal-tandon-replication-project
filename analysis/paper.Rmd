@@ -45,7 +45,7 @@ We kept the same criteria for stopwords and the number of topics as the original
 The python code used for replication can be found [here](https://github.com/chavi-g/Replication-Project-DATA598/blob/master/notes/LDA_model.py).
 
 ```{r cache=TRUE, include=FALSE}
-#install.packages("reticulate",repos = "http://cran.us.r-project.org")
+# install.packages("reticulate",repos = "http://cran.us.r-project.org")
 library(reticulate)
 use_virtualenv("r-reticulate")
 py_available(TRUE)
@@ -136,44 +136,48 @@ df.to_csv("..\data\prob.csv")
 
 
 ```{r echo=FALSE, warning=FALSE, message=FALSE}
-prob_matrix <- read.csv("../data/prob.csv", header=TRUE)
+prob_matrix <- read.csv("../data/prob.csv", header = TRUE)
 require(reshape2)
 
 plot_figure <- function() {
- topic_docs <- prob_matrix
-  captionstext <- read.csv('../data/posts-formatted-for-topicmodelling.csv', stringsAsFactors = FALSE)
-## kludge for when username comesthrough as numeric rather than character
-  captionstext$username <-as.character(captionstext$username)
+  topic_docs <- prob_matrix
+  captionstext <- read.csv("../data/posts-formatted-for-topicmodelling.csv", stringsAsFactors = FALSE)
+  ## kludge for when username comesthrough as numeric rather than character
+  captionstext$username <- as.character(captionstext$username)
 
-  documents <- data.frame(text = captionstext$text,
-                        id = make.unique(captionstext$username),
-                        class = captionstext$year, 
-                        stringsAsFactors=FALSE)
-  topic_docs<- t(topic_docs[,-1])
+  documents <- data.frame(
+    text = captionstext$text,
+    id = make.unique(captionstext$username),
+    class = captionstext$year,
+    stringsAsFactors = FALSE
+  )
+  topic_docs <- t(topic_docs[, -1])
   names(topic_docs) <- documents$id
-# find top n topics for a certain author
-  df1 <- t(topic_docs[,grep("234396855", names(topic_docs))])
-  #8963295 is a person who has 'for sale' in her post
-  #255766488 natural_selections - skullshop.ca
-  #361451583 ryan matthew cohn
-  #234396855 pandora's box, York
+  # find top n topics for a certain author
+  df1 <- t(topic_docs[, grep("234396855", names(topic_docs))])
+  # 8963295 is a person who has 'for sale' in her post
+  # 255766488 natural_selections - skullshop.ca
+  # 361451583 ryan matthew cohn
+  # 234396855 pandora's box, York
   topic.proportions.df <- melt(cbind(data.frame(df1),
-                                   document=factor(1:nrow(df1))),
-                             variable.name="topic",
-                             id.vars = "document") 
-  
+    document = factor(1:nrow(df1))
+  ),
+  variable.name = "topic",
+  id.vars = "document"
+  )
+
   # plot for each doc by that author
   require(ggplot2)
-  dpi=600    #pixels per square inch
-  png("../analysis/figures/output_figure.png", width=14*dpi, height=14*dpi, res=dpi)
+  dpi <- 600 # pixels per square inch
+  png("../analysis/figures/output_figure.png", width = 14 * dpi, height = 14 * dpi, res = dpi)
 
   print({
-    p <- ggplot(topic.proportions.df, aes(topic, value, fill=document)) +
-      geom_bar(stat="identity") +
+    p <- ggplot(topic.proportions.df, aes(topic, value, fill = document)) +
+      geom_bar(stat = "identity") +
       ylab("proportion") +
-      theme(axis.text.x = element_text(angle=90, hjust=1)) +  
+      theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
       coord_flip() +
-      facet_wrap(~ document, ncol=5)
+      facet_wrap(~document, ncol = 5)
   })
   dev.off()
 }
