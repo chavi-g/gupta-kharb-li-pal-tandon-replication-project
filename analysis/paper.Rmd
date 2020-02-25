@@ -24,16 +24,20 @@ knitr::include_graphics("figures/fig5-singletrader.png")
 ```
 
 # Replication Method
-Figure 5: Topics within the posts of a single Instagram account, is related to topic modeling and was originally carried out using the ‘mallet’ package in R. We decided to use the ‘gensim’ package in Python to perform topic modeling and replicate the figure. 
+Figure 5: Topics within the posts of a single Instagram account, is related to topic modeling and was originally carried out using the ‘mallet’ package in R. We wanted to explore how topic-modelling was carried out in python. Python is a very powerful tool and performing a topic-model on it would be an important learning aspect. But the visualization powers of R is undeniable. So to club the strong aspects of both the languages, we process the data and bring it to a suitable form using python and then further using this result to create a visualization. We decided to use the ‘gensim’ package in Python to perform topic modeling and the ggplot library in R to draw the visualization.
 Steps:
- 1. We read in the csv file and removed stopwords as specified in the paper. 
- 2. We converted texts from each of the instagram posts into a vector of words and stored it in a variable called ‘data_words’. 
- 3. We created a variable called ‘corpus’ that maps every word to an id and calculates the term document frequency.
- 4. We built an LDA model using the ‘gensim’ package and specified the parameter for the number of topics as 25. This model is named ‘lda’. 
- 5. We wrote down our results in a preliminary CSV called 'prob.csv'. Then we read the CSV with our R chunk, performing data type conversion and manipulation same as the original paper. 
- 6. We used qqplot to approximate the visualization in R. 
- 7. We also displayed all the words relating to a particular topic in R. 
- 
+1.	We used the ‘reticulate’ package which helps us install python packages in R. The main package to be used is the python Gensim package. 
+2.	We read in the csv file and removed stopwords as specified in the paper. 
+3.	 We converted texts from each of the Instagram posts into a vector of words and stored it in a variable called ‘data_words’.  We used gensim.utils.simple_preprocess for this functionality.
+4.	We created a variable called ‘corpus’ that maps every word to id and calculates the term-document frequency.
+5.	We built an LDA model using the ‘gensim’ package and specified the parameter for the number of topics as 25. This model is named ‘lda’. 
+6.	We used lda. lda.show_topics() to generate the labels for the top 25 topics.
+7.	We used lda.get_document_topics() to generate a matrix of the documents and the corresponding probabilities of the 3-worded topics.
+8.	We wrote down our results in a preliminary CSV called 'prob.csv'. Then we read the CSV with our R chunk, performing data type conversion and manipulation same as the original paper.
+9.	We select only a single username ‘234396855’ which is also the one used in the paper, for uniform comparison of 25 topics and top-3 topic words in each topic.
+10.	We used qqplot to approximate the visualization in R. 
+11.	We also displayed all the words relating to a particular topic in R. 
+
  We kept the same criteria for stopwords and the number of topics as the original study. We followed the same analytical procedure. The ‘gensim’ package in Python is for topic modeling and has similar functions to the ‘mallet’ package used by the original study. Since we use the same dataset and methods and only change the topic modeling library i.e. the tools and the environment of the experiment, the result should be the same. 
 
 Below is the code we have used for our replication.
